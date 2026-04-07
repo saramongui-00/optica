@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.go": "go",
+        "*.py": "python",
+        "*.java": "java"
+    },
+    "editor.formatOnSave": true
+}

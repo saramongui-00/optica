@@ -108,7 +108,7 @@ Desarrollado como proyecto académico para la materia **Ingeniería de Software 
 | 2 | **ms-usuarios** | Node.js + Express | PostgreSQL | 8082 |
 | 3 | **ms-citas** | Python + FastAPI | MongoDB | 8083 |
 | 4 | **ms-pacientes** | Python + FastAPI | MongoDB | 8084 |
-| 5 | **ms-historial** | Java + Spring Boot | MongoDB | 8085 |
+| 5 | **ms-historial** | Java + Spring Boot | Redis | 8085 |
 
 ### ms-autenticacion
 Gestiona el acceso al sistema mediante autenticación con **JWT (JSON Web Tokens)**. Implementa el patrón arquitectónico *Access Token*.

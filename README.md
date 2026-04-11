@@ -274,9 +274,9 @@ optica/
 ## 👥 Equipo
 
 Desarrollado por estudiantes de **Ingeniería de Sistemas — UPTC**
-Juan José Fúquene
-Sara Alejandra Mongui
-Diana Lucia Saavedra
+- Juan José Fúquene
+- Sara Alejandra Mongui
+- Diana Lucia Saavedra
 Materia: Ingeniería de Software II · 2026
 
 ---

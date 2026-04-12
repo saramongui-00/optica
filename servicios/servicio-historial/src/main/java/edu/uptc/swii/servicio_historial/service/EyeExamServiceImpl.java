@@ -1,5 +1,6 @@
 package edu.uptc.swii.servicio_historial.service;
 
+import edu.uptc.swii.servicio_historial.kafka.EyeExamEventProducer;
 import edu.uptc.swii.servicio_historial.model.EyeExam;
 import edu.uptc.swii.servicio_historial.repository.EyeExamRepository;
 import edu.uptc.swii.servicio_historial.repository.MedicalHistoryRepository;
@@ -14,6 +15,7 @@ public class EyeExamServiceImpl implements EyeExamService {
 
     private final EyeExamRepository examRepository;
     private final MedicalHistoryRepository historyRepository;
+    private final EyeExamEventProducer producer;
 
     @Override
     public EyeExam createExam(String medicalHistoryId, EyeExam exam) {
@@ -21,6 +23,8 @@ public class EyeExamServiceImpl implements EyeExamService {
                 .orElseThrow(() -> new RuntimeException("Historial no existe"));
 
         exam.setMedicalHistoryId(medicalHistoryId);
+        EyeExam saved = examRepository.save(exam);
+        producer.publishEyeExamCreated(saved.getId(), medicalHistoryId);
 
         return examRepository.save(exam);
     }
@@ -34,5 +38,10 @@ public class EyeExamServiceImpl implements EyeExamService {
     @Override
     public List<EyeExam> getExamsByHistory(String medicalHistoryId) {
         return examRepository.findByMedicalHistoryId(medicalHistoryId);
+    }
+
+    @Override
+    public void prepareEyeExam(String patientId, String appointmentId) {
+        System.out.println("Preparando examen para paciente " + patientId);
     }
 }

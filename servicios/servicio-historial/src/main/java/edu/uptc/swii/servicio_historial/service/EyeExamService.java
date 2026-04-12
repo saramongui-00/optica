@@ -11,4 +11,6 @@ public interface EyeExamService {
     EyeExam getExam(String examId);
 
     List<EyeExam> getExamsByHistory(String medicalHistoryId);
+
+    void prepareEyeExam(String patientId, String appointmentId);
 }

@@ -14,21 +14,28 @@ public class MedicalHistoryController {
 
     private final MedicalHistoryService historyService;
 
-    // Crear historial (normalmente lo disparará Kafka)
     @PostMapping("/patient/{patientId}")
     public ResponseEntity<MedicalHistory> createHistory(@PathVariable String patientId) {
         return ResponseEntity.ok(historyService.createMedicalHistory(patientId));
     }
 
-    // Obtener historial por ID
     @GetMapping("/{id}")
     public ResponseEntity<MedicalHistory> getHistoryById(@PathVariable String id) {
         return ResponseEntity.ok(historyService.getById(id));
     }
 
-    // Obtener historial completo por paciente (con exámenes)
     @GetMapping("/patient/{patientId}")
     public ResponseEntity<MedicalHistoryFullDTO> getFullHistory(@PathVariable String patientId) {
         return ResponseEntity.ok(historyService.getFullHistory(patientId));
+    }
+
+    @GetMapping("/{id}/documento")
+    public String generarDocumento(@PathVariable String id){
+        return "Documento HC generado correctamente";
+    }
+
+    @GetMapping("/{id}/rx")
+    public String generarRX(@PathVariable String id){
+        return "Receta final generada correctamente";
     }
 }

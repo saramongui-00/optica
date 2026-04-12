@@ -1,6 +1,7 @@
 package edu.uptc.swii.servicio_historial.service;
 
 import edu.uptc.swii.servicio_historial.dto.MedicalHistoryFullDTO;
+import edu.uptc.swii.servicio_historial.kafka.MedicalHistoryEventProducer;
 import edu.uptc.swii.servicio_historial.model.EyeExam;
 import edu.uptc.swii.servicio_historial.model.MedicalHistory;
 import edu.uptc.swii.servicio_historial.repository.EyeExamRepository;
@@ -16,6 +17,7 @@ public class MedicalHistoryServiceImpl implements MedicalHistoryService {
 
     private final MedicalHistoryRepository historyRepository;
     private final EyeExamRepository examRepository;
+    private final MedicalHistoryEventProducer producer;
 
     @Override
     public MedicalHistory createMedicalHistory(String patientId) {
@@ -28,7 +30,8 @@ public class MedicalHistoryServiceImpl implements MedicalHistoryService {
 
         MedicalHistory history = new MedicalHistory();
         history.setPatientId(patientId);
-
+        MedicalHistory saved = historyRepository.save(history);
+        producer.publishMedicalHistoryCreated(saved.getId(), patientId);
         return historyRepository.save(history);
     }
 

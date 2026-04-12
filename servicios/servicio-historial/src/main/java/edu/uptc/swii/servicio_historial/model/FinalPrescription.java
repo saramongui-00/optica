@@ -1,7 +1,14 @@
 package edu.uptc.swii.servicio_historial.model;
 
-import org.springframework.data.mongodb.core.mapping.Field;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class FinalPrescription {
     private Eye eye;
     private double horizontal;

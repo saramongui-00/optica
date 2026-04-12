@@ -1,7 +1,15 @@
 package edu.uptc.swii.servicio_historial.model;
 
-import java.time.LocalDate;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.time.LocalDate;
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class PersonalBackground {
     private String personalBackground;
     private String familiarBackground;

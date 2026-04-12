@@ -21,27 +21,44 @@ const conectar = async () => {
     eachMessage: async ({ topic, message }) => {
       const valor = message.value.toString();
 
-      if (topic === 'adduser_events') {
-        const usuario = fromJson(valor);
-        await usuarioService.guardar(usuario);
-        console.log('Usuario creado:', usuario.user);
-      }
+     if (topic === 'adduser_events') {
+  try {
+    const usuario = fromJson(valor);
+    usuario.estado = 'HABILITADO';
+    await usuarioService.guardar(usuario);
+    console.log('Usuario creado:', usuario.user);
+  } catch (error) {
+    console.error('Error procesando adduser_events:', error.message);
+  }
+}
 
-      if (topic === 'edituser_events') {
-        const usuario = fromJson(valor);
-        await usuarioService.actualizar(usuario);
-        console.log('Usuario actualizado:', usuario.id);
-      }
+if (topic === 'edituser_events') {
+  try {
+    const usuario = fromJson(valor);
+    await usuarioService.actualizar(usuario);
+    console.log('Usuario actualizado:', usuario.id);
+  } catch (error) {
+    console.error('Error procesando edituser_events:', error.message);
+  }
+}
 
-      if (topic === 'finduser_events') {
-        const usuario = await usuarioService.buscarPorId(valor);
-        console.log('Usuario encontrado:', usuario);
-      }
+if (topic === 'finduser_events') {
+  try {
+    const usuario = await usuarioService.buscarPorId(valor);
+    console.log('Usuario encontrado:', usuario);
+  } catch (error) {
+    console.error('Error procesando finduser_events:', error.message);
+  }
+}
 
-      if (topic === 'disableuser_events') {
-        await usuarioService.inhabilitar(valor);
-        console.log('Usuario inhabilitado:', valor);
-      }
+if (topic === 'disableuser_events') {
+  try {
+    await usuarioService.inhabilitar(valor);
+    console.log('Usuario inhabilitado:', valor);
+  } catch (error) {
+    console.error('Error procesando disableuser_events:', error.message);
+  }
+}
     },
   });
 

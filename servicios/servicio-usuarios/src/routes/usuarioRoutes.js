@@ -4,9 +4,11 @@ const {
   registrarUsuario,
   consultarUsuario,
   modificarUsuario,
-  inhabilitarUsuario
+  inhabilitarUsuario,
+  buscarTodos
 } = require('../controller/usuarioController');
 
+router.get('/', buscarTodos);
 router.post('/', registrarUsuario);
 router.get('/:id', consultarUsuario);
 router.put('/:id', modificarUsuario);

@@ -41,9 +41,19 @@ const inhabilitarUsuario = async (req, res) => {
   }
 };
 
+const buscarTodos = async (req, res) => {
+  try {
+    const usuarios = await usuarioService.buscarTodos();
+    res.json(usuarios);
+  } catch (error) {
+    res.status(500).json({ mensaje: error.message });
+  }
+};
+
 module.exports = {
   registrarUsuario,
   consultarUsuario,
   modificarUsuario,
   inhabilitarUsuario,
+  buscarTodos
 };

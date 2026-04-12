@@ -1,5 +1,7 @@
 package edu.uptc.swii.servicio_historial.model;
 
+import org.springframework.data.mongodb.core.mapping.Field;
+
 public class FinalPrescription {
     private Eye eye;
     private double horizontal;

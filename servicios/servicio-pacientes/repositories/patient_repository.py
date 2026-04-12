@@ -10,7 +10,18 @@ class PatientRepository:
         self.collection = self.db.pacientes
 
     def _to_dict(self, paciente: Paciente) -> dict:
-        return paciente.model_dump(by_alias=True, exclude={"id"})
+        data = paciente.model_dump(by_alias=True, exclude={"id"})
+        
+        # Convertir fechas a string solo si son objetos date
+        if 'fecha_nacimiento' in data and data['fecha_nacimiento']:
+            if hasattr(data['fecha_nacimiento'], 'isoformat'):
+                data['fecha_nacimiento'] = data['fecha_nacimiento'].isoformat()
+        
+        if 'fecha_admision' in data and data['fecha_admision']:
+            if hasattr(data['fecha_admision'], 'isoformat'):
+                data['fecha_admision'] = data['fecha_admision'].isoformat()
+        
+        return data
 
     async def save(self, paciente: Paciente) -> str:
         result = await self.collection.insert_one(self._to_dict(paciente))

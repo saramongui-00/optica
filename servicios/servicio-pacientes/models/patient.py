@@ -1,6 +1,6 @@
-from datetime import datetime, date
-from typing import Optional
 from pydantic import BaseModel, Field, computed_field
+from datetime import date
+from typing import Optional
 from models.enums import Sexo, EstadoCivil
 from models.acudiente import Acudiente
 
@@ -10,7 +10,7 @@ class Paciente(BaseModel):
     nombres: str
     apellidos: str
     sexo: Sexo
-    fecha_nacimiento: date
+    fecha_nacimiento: str
     estado_civil: EstadoCivil
     ocupacion: str
     departamento: str
@@ -19,15 +19,19 @@ class Paciente(BaseModel):
     correo_electronico: str
     telefono: str
     eps: str
-    fecha_admision: date = Field(default_factory=date.today)
+    fecha_admision: str = Field(default_factory=lambda: date.today().isoformat())  # ← Cambiado
     acudiente: Optional[Acudiente] = None
     
     @computed_field
     @property
     def edad(self) -> int:
+        if isinstance(self.fecha_nacimiento, str):
+            nacimiento = date.fromisoformat(self.fecha_nacimiento)
+        else:
+            nacimiento = self.fecha_nacimiento
         today = date.today()
-        return today.year - self.fecha_nacimiento.year - (
-            (today.month, today.day) < (self.fecha_nacimiento.month, self.fecha_nacimiento.day)
+        return today.year - nacimiento.year - (
+            (today.month, today.day) < (nacimiento.month, nacimiento.day)
         )
     
     class Config:

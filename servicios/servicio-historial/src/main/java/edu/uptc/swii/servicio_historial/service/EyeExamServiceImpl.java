@@ -17,8 +17,6 @@ public class EyeExamServiceImpl implements EyeExamService {
 
     @Override
     public EyeExam createExam(String medicalHistoryId, EyeExam exam) {
-
-        // validar que exista historial
         historyRepository.findById(medicalHistoryId)
                 .orElseThrow(() -> new RuntimeException("Historial no existe"));
 

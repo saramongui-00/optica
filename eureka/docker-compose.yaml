@@ -40,10 +40,8 @@ services:
       MYSQL_DATABASE: db_usuarios
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     restart: always
-
-volumes:
-  mysql_data:
 
   mongodb:
     image: mongo:7
@@ -66,6 +64,7 @@ volumes:
       retries: 5
 
 volumes:
+  mysql_data:
   mongo_data:
 
 networks:

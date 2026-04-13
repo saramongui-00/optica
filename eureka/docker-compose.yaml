@@ -1,5 +1,6 @@
-services:
+version: '3.8'
 
+services:
   eureka-server:
     build: .
     container_name: eureka-server
@@ -32,7 +33,78 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-  
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - optica-network
+    environment:
+      MYSQL_ROOT_PASSWORD: mnbv
+      MYSQL_DATABASE: db_usuarios
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
+
+  mongodb-historial:
+    image: mongo:7
+    container_name: mongodb-historial
+    ports:
+      - "27018:27017"
+    networks:
+      - optica-network
+    volumes:
+      - mongo_data:/data/db
+
+  ms-usuarios:
+    build: ../servicios/servicio-usuarios
+    container_name: ms-usuarios
+    depends_on:
+      - kafka
+      - mysql
+      - eureka-server
+    ports:
+      - "8082:8082"
+    networks:
+      - optica-network
+    restart: on-failure 
+    environment:
+      PORT: 8082
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: mnbv
+      DB_NAME: db_usuarios
+      KAFKA_BROKER: kafka:9092
+      JWT_SECRET: una_clave_secreta_larga_y_dificil
+      EUREKA_HOST: eureka-server
+
+  ms-autenticacion:
+    build: ../servicios/servicio-auth
+    container_name: ms-autenticacion
+    depends_on:
+      - kafka
+      - mysql
+      - eureka-server
+    ports:
+      - "8081:8081"
+    networks:
+      - optica-network
+    restart: on-failure 
+    environment:
+      PORT: 8081
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: mnbv
+      DB_NAME: db_usuarios
+      KAFKA_BROKER: kafka:9092
+      JWT_SECRET: una_clave_secreta_larga_y_dificil
+      JWT_EXPIRES_IN: 8h
+      EUREKA_HOST: eureka-server
+
   ms-historial:
     build: ../servicios/servicio-historial
     container_name: ms-historial
@@ -46,29 +118,6 @@ services:
       - optica-network
     environment:
       SPRING_PROFILES_ACTIVE: docker
-
-  mongodb-historial:
-    image: mongo:7
-    container_name: mongodb-historial
-    ports:
-      - "27018:27017"
-    networks:
-      - optica-network
-    volumes:
-      - mongo_data:/data/db
-
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    ports:
-      - "3306:3306"
-    networks:
-      - optica-network
-    environment:
-      MYSQL_ROOT_PASSWORD: mnbv
-      MYSQL_DATABASE: db_usuarios
-    volumes:
-      - mysql_data:/var/lib/mysql
 
 volumes:
   mysql_data:

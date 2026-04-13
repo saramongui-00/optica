@@ -1,4 +1,4 @@
-version: '3.8'
+
 
 services:
   eureka-server:
@@ -148,6 +148,7 @@ services:
     depends_on:
       - mongodb-pacientes
       - kafka
+      - eureka-server
     ports:
       - "8084:8001"
     networks:
@@ -164,6 +165,7 @@ services:
     depends_on:
       - redis-citas
       - kafka
+      - eureka-server
     ports:
       - "8083:8002"
     networks:
@@ -174,17 +176,17 @@ services:
       PORT: 8002
     restart: on-failure
 
-  frontend:
-    build: ../frontend
-    container_name: frontend
-    ports:
-      - "5173:5173"
-    networks:
-      - optica-network
-    depends_on:
-      - servicio-pacientes
-      - servicio-citas
-    restart: on-failure
+  #frontend:
+    #build: ../frontend
+    #container_name: frontend
+    #ports:
+      #- "5173:5173"
+    #networks:
+      #- optica-network
+    #depends_on:
+      #- servicio-pacientes
+      #- servicio-citas
+    #restart: on-failure
 
 volumes:
   mysql_data:

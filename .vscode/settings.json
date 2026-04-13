@@ -4,5 +4,6 @@
         "*.py": "python",
         "*.java": "java"
     },
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "python-envs.defaultEnvManager": "ms-python.python:system"
 }

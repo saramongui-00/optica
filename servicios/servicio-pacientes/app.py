@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from controllers.patient_controller import router
-# from services.patient_service import PatientService
-# from events.consumer import PatientEventConsumer
+from services.patient_service import PatientService
+from events.consumer import PatientEventConsumer
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,13 +10,13 @@ app = FastAPI(title="Servicio de Pacientes", version="1.0")
 
 app.include_router(router)
 
-#service = PatientService()
-#consumer = PatientEventConsumer(service)
+service = PatientService()
+consumer = PatientEventConsumer(service)
 
-#@app.on_event("startup")
-#async def startup_event():
-    #consumer.start_listening()
-    #print("Servicio de Pacientes iniciado en puerto 8001")
+@app.on_event("startup")
+async def startup_event():
+    consumer.start_listening()
+    print("Servicio de Pacientes iniciado en puerto 8001")
 
 @app.get("/health")
 async def health():

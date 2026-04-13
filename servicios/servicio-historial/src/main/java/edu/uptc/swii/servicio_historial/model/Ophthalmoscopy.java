@@ -1,0 +1,21 @@
+package edu.uptc.swii.servicio_historial.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class Ophthalmoscopy {
+    private Eye eye;
+    private String opticDisc;
+    private String cupping;
+    private String macula;
+    private String rav;
+    private String media;
+    private String fovealBrightness;
+
+}

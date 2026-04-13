@@ -6,7 +6,7 @@ const {
   modificarUsuario,
   inhabilitarUsuario,
   buscarTodos
-} = require('../controller/UsuarioController');
+} = require('../controller/usuarioController');
 
 router.get('/', buscarTodos);
 router.post('/', registrarUsuario);

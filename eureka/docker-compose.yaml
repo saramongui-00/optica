@@ -6,28 +6,31 @@ services:
     container_name: eureka-server
     ports:
       - "8761:8761"
+    networks:
+      - optica-network
     restart: always
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: zookeeper
-    ports:
-      - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - optica-network
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka
-    ports:
-      - "9092:9092"
     depends_on:
       - zookeeper
+    ports:
+      - "9092:9092"
+    networks:
+      - optica-network
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   mysql:
@@ -35,6 +38,8 @@ services:
     container_name: mysql
     ports:
       - "3306:3306"
+    networks:
+      - optica-network
     environment:
       MYSQL_ROOT_PASSWORD: mnbv
       MYSQL_DATABASE: db_usuarios
@@ -43,25 +48,76 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     restart: always
 
-  mongodb:
+  mongodb-historial:
     image: mongo:7
-    container_name: mongodb
-    restart: always
+    container_name: mongodb-historial
     ports:
       - "27018:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin123
-    volumes:
-      - mongo_data:/data/db
-      - ./mongo-init:/docker-entrypoint-initdb.d
     networks:
       - optica-network
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    volumes:
+      - mongo_data:/data/db
+
+  ms-usuarios:
+    build: ../servicios/servicio-usuarios
+    container_name: ms-usuarios
+    depends_on:
+      - kafka
+      - mysql
+      - eureka-server
+    ports:
+      - "8082:8082"
+    networks:
+      - optica-network
+    restart: on-failure 
+    environment:
+      PORT: 8082
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: mnbv
+      DB_NAME: db_usuarios
+      KAFKA_BROKER: kafka:9092
+      JWT_SECRET: una_clave_secreta_larga_y_dificil
+      EUREKA_HOST: eureka-server
+
+  ms-autenticacion:
+    build: ../servicios/servicio-auth
+    container_name: ms-autenticacion
+    depends_on:
+      - kafka
+      - mysql
+      - eureka-server
+    ports:
+      - "8081:8081"
+    networks:
+      - optica-network
+    restart: on-failure 
+    environment:
+      PORT: 8081
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: mnbv
+      DB_NAME: db_usuarios
+      KAFKA_BROKER: kafka:9092
+      JWT_SECRET: una_clave_secreta_larga_y_dificil
+      JWT_EXPIRES_IN: 8h
+      EUREKA_HOST: eureka-server
+
+  ms-historial:
+    build: ../servicios/servicio-historial
+    container_name: ms-historial
+    depends_on:
+      - kafka
+      - mongodb-historial
+      - eureka-server
+    ports:
+      - "8085:8085"
+    networks:
+      - optica-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
 
 volumes:
   mysql_data:

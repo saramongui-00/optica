@@ -2,12 +2,12 @@ import axios from 'axios';
 
 // Usar 127.0.0.1 en lugar de localhost (más confiable)
 export const pacientesAPI = axios.create({
-  baseURL: 'http://127.0.0.1:8001',
+  baseURL: 'http://127.0.0.1:8084',
   timeout: 10000,
 });
 
 export const citasAPI = axios.create({
-  baseURL: 'http://127.0.0.1:8002',
+  baseURL: 'http://127.0.0.1:8083',
   timeout: 10000,
 });
 

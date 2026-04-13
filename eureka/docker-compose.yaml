@@ -58,6 +58,29 @@ services:
     volumes:
       - mongo_data:/data/db
 
+  mongodb-pacientes:
+    image: mongo:7
+    container_name: mongodb-pacientes
+    ports:
+      - "27019:27017"
+    networks:
+      - optica-network
+    volumes:
+      - mongo_pacientes_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+
+  redis-citas:
+    image: redis/redis-stack:latest
+    container_name: redis-citas
+    ports:
+      - "6379:6379"
+      - "8003:8001"
+    networks:
+      - optica-network
+    restart: always
+
   ms-usuarios:
     build: ../servicios/servicio-usuarios
     container_name: ms-usuarios
@@ -119,9 +142,54 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
 
+  servicio-pacientes:
+    build: ../servicios/servicio-pacientes
+    container_name: servicio-pacientes
+    depends_on:
+      - mongodb-pacientes
+      - kafka
+    ports:
+      - "8084:8001"
+    networks:
+      - optica-network
+    environment:
+      MONGO_URL: mongodb://admin:admin123@mongodb-pacientes:27017/?authSource=admin
+      KAFKA_URL: kafka:9092
+      PORT: 8001
+    restart: on-failure
+
+  servicio-citas:
+    build: ../servicios/servicio-citas
+    container_name: servicio-citas
+    depends_on:
+      - redis-citas
+      - kafka
+    ports:
+      - "8083:8002"
+    networks:
+      - optica-network
+    environment:
+      REDIS_URL: redis://redis-citas:6379
+      KAFKA_URL: kafka:9092
+      PORT: 8002
+    restart: on-failure
+
+  frontend:
+    build: ../frontend
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    networks:
+      - optica-network
+    depends_on:
+      - servicio-pacientes
+      - servicio-citas
+    restart: on-failure
+
 volumes:
   mysql_data:
   mongo_data:
+  mongo_pacientes_data:
 
 networks:
   optica-network:

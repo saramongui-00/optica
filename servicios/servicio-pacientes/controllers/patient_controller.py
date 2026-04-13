@@ -3,7 +3,7 @@ from services.patient_service import PatientService
 from models.patient import Paciente
 from models.enums import Sexo, EstadoCivil
 
-router = APIRouter(prefix="/api/pacientes", tags=["Pacientes"])
+router = APIRouter(prefix="/pacientes", tags=["Pacientes"])
 service = PatientService()
 
 @router.post("/")

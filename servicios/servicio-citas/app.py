@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from controllers.appointment_controller import router
 from dotenv import load_dotenv
 import os
@@ -31,6 +32,15 @@ async def lifespan(app: FastAPI):
         print("👋 Servicio de Citas detenido")
 
 app = FastAPI(title="Appointment Service", version="1.0", lifespan=lifespan)
+
+# Configurar CORS para permitir peticiones desde el frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(router)
 

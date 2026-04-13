@@ -20,4 +20,11 @@ const sendLoginEvent = async (datos) => {
   });
 };
 
-module.exports = { conectar, sendLoginEvent };
+const sendLogoutEvent = async (datos) => {
+  await producer.send({
+    topic: 'logout_events',
+    messages: [{ value: toJson(datos) }],
+  });
+};
+
+module.exports = { conectar, sendLoginEvent, sendLogoutEvent };

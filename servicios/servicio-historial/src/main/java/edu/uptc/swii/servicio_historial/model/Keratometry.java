@@ -16,6 +16,4 @@ public class Keratometry {
     private double axis;
     private String sights;
     private String astigmatism;
-
-
 }

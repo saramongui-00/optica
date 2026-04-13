@@ -13,13 +13,11 @@ public class Refraction {
     private Eye eye;
     private double reHorizontal;
     private double reVertical;
-    private double reEje;
+    private double reAxis;
     private double rdHorizontal;
     private double rdVertical;
-    private double rdEje;
+    private double rdAxis;
     private double subHorizontal;
     private double subVertical;
-    private double subEje;
-
-
+    private double subAxis;
 }

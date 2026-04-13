@@ -25,6 +25,7 @@ const conectar = async () => {
   try {
     const usuario = fromJson(valor);
     usuario.estado = 'HABILITADO';
+    usuario.rol = 'SECRETARIO';
     await usuarioService.guardar(usuario);
     console.log('Usuario creado:', usuario.user);
   } catch (error) {

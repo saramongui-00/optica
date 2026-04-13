@@ -2,10 +2,10 @@ const pool = require('../config/db');
 
 const guardar = async (usuario) => {
   const [result] = await pool.query(
-    `INSERT INTO usuarios (nombre, user, celular, email, password, estado)
-     VALUES (?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO usuarios (nombre, user, celular, email, password, estado, rol)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
     [usuario.nombre, usuario.user, usuario.celular,
-     usuario.email, usuario.password, usuario.estado]
+     usuario.email, usuario.password, usuario.estado, usuario.rol]
   );
   return result;
 };
@@ -21,7 +21,7 @@ const actualizar = async (usuario) => {
 
 const buscarPorId = async (id) => {
   const [rows] = await pool.query(
-    'SELECT id, nombre, user, celular, email, estado FROM usuarios WHERE id = ?',
+    'SELECT id, nombre, user, celular, email, estado, rol FROM usuarios WHERE id = ?',
     [id]
   );
   return rows[0] || null;
@@ -45,7 +45,7 @@ const inhabilitar = async (id) => {
 
 const buscarTodos = async () => {
   const [rows] = await pool.query(
-    'SELECT id, nombre, user, celular, email, estado FROM usuarios'
+    'SELECT id, nombre, user, celular, email, estado, rol FROM usuarios'
   );
   return rows;
 };

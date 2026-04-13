@@ -1,67 +1,74 @@
-version: '3.8'
-
 services:
+
   eureka-server:
     build: .
     container_name: eureka-server
     ports:
       - "8761:8761"
+    networks:
+      - optica-network
     restart: always
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: zookeeper
-    ports:
-      - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - optica-network
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka
-    ports:
-      - "9092:9092"
     depends_on:
       - zookeeper
+    ports:
+      - "9092:9092"
+    networks:
+      - optica-network
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  
+  ms-historial:
+    build: ../servicios/servicio-historial
+    container_name: ms-historial
+    depends_on:
+      - kafka
+      - mongodb-historial
+      - eureka-server
+    ports:
+      - "8085:8085"
+    networks:
+      - optica-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  mongodb-historial:
+    image: mongo:7
+    container_name: mongodb-historial
+    ports:
+      - "27018:27017"
+    networks:
+      - optica-network
+    volumes:
+      - mongo_data:/data/db
 
   mysql:
     image: mysql:8.0
     container_name: mysql
     ports:
       - "3306:3306"
+    networks:
+      - optica-network
     environment:
       MYSQL_ROOT_PASSWORD: mnbv
       MYSQL_DATABASE: db_usuarios
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    restart: always
-
-  mongodb:
-    image: mongo:7
-    container_name: mongodb
-    restart: always
-    ports:
-      - "27018:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin123
-    volumes:
-      - mongo_data:/data/db
-      - ./mongo-init:/docker-entrypoint-initdb.d
-    networks:
-      - optica-network
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
 volumes:
   mysql_data:

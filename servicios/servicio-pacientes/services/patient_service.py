@@ -1,10 +1,11 @@
 from repositories.patient_repository import PatientRepository
 from models.patient import Paciente
-import json
+import httpx
 
 class PatientService:
     def __init__(self):
         self.repository = PatientRepository()
+        self.historial_url = "http://localhost:8085/historial"
 
     def _serialize_paciente(self, paciente_dict: dict) -> dict:
         if paciente_dict and "_id" in paciente_dict:
@@ -12,7 +13,7 @@ class PatientService:
             del paciente_dict["_id"]
         return paciente_dict
 
-    async def create_patient(self, patient_data: dict) -> dict:
+    async def create_patient(self, patient_data: dict, token: str) -> dict:
         existente = await self.repository.find_by_documento(patient_data["documento"])
         if existente:
             raise Exception("Ya existe un paciente con este documento")
@@ -23,8 +24,29 @@ class PatientService:
         
         paciente = Paciente(**patient_data)
         patient_id = await self.repository.save(paciente)
-        
-        return {"id": patient_id, "message": "Paciente creado exitosamente"}
+
+        if not token:
+            raise Exception("Token requerido")
+
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f"{self.historial_url}/patient/{patient_id}",
+                    headers={
+                        "Authorization": token  
+                    }
+                )
+
+                if response.status_code != 200:
+                    print("Historial no se creó correctamente:", response.text)
+
+        except Exception as e:
+            print("Error llamando a historial:", str(e))
+
+        return {
+            "id": patient_id,
+            "message": "Paciente creado exitosamente (historial solicitado)"
+        }
 
     async def get_patient(self, patient_id: str) -> dict:
         paciente = await self.repository.find_by_id(patient_id)

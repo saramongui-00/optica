@@ -1,6 +1,7 @@
 package edu.uptc.swii.servicio_historial.service;
 
 import edu.uptc.swii.servicio_historial.model.EyeExam;
+import edu.uptc.swii.servicio_historial.model.Rx;
 
 import java.util.List;
 
@@ -13,4 +14,6 @@ public interface EyeExamService {
     List<EyeExam> getExamsByHistory(String medicalHistoryId);
 
     void prepareEyeExam(String patientId, String appointmentId);
+
+    Rx getFinalRX(String examId);
 }

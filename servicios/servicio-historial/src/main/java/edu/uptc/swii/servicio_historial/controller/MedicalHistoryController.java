@@ -38,9 +38,5 @@ public class MedicalHistoryController {
         return "Documento HC generado correctamente";
     }
 
-    //PENDIENTE
-    @GetMapping("/{id}/rx")
-    public String generarRX(@PathVariable String id){
-        return "Receta final generada correctamente";
-    }
+
 }

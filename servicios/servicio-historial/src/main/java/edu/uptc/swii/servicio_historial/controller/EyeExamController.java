@@ -1,6 +1,7 @@
 package edu.uptc.swii.servicio_historial.controller;
 
 import edu.uptc.swii.servicio_historial.model.EyeExam;
+import edu.uptc.swii.servicio_historial.model.Rx;
 import edu.uptc.swii.servicio_historial.service.EyeExamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -38,5 +39,10 @@ public class EyeExamController {
             @PathVariable String historyId) {
 
         return ResponseEntity.ok(examService.getExamsByHistory(historyId));
+    }
+
+    @GetMapping("/{examId}/rx")
+    public ResponseEntity<Rx> getRX(@PathVariable String examId) {
+        return ResponseEntity.ok(examService.getFinalRX(examId));
     }
 }

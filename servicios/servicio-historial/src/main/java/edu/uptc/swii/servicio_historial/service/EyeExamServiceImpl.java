@@ -2,6 +2,7 @@ package edu.uptc.swii.servicio_historial.service;
 
 import edu.uptc.swii.servicio_historial.kafka.EyeExamEventProducer;
 import edu.uptc.swii.servicio_historial.model.EyeExam;
+import edu.uptc.swii.servicio_historial.model.Rx;
 import edu.uptc.swii.servicio_historial.repository.EyeExamRepository;
 import edu.uptc.swii.servicio_historial.repository.MedicalHistoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,16 @@ public class EyeExamServiceImpl implements EyeExamService {
         System.out.println("Preparando examen para paciente " + patientId);
     }
 
-    public void generateFinalRX(){
+    @Override
+    public Rx getFinalRX(String examId) {
 
+        EyeExam exam = examRepository.findById(examId)
+                .orElseThrow(() -> new RuntimeException("Examen no encontrado"));
+
+        if (exam.getFinalRX() == null) {
+            throw new RuntimeException("El examen no tiene RX final generado");
+        }
+
+        return exam.getFinalRX();
     }
 }

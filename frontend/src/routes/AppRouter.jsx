@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "../pages/Login";
 import User from "../pages/User";
+import Users from "../pages/Users";
 import Patient from "../pages/Patient";
 import PrivateRoute from "../components/PrivateRoute";
 
@@ -22,6 +23,11 @@ function AppRouter() {
         <Route path="/dashboard" element={
           <PrivateRoute rolesPermitidos={["OPTOMETRA"]}>
             <User />
+          </PrivateRoute>
+        } />
+        <Route path="/users" element={
+          <PrivateRoute>
+            <Users />
           </PrivateRoute>
         } />
       </Routes>

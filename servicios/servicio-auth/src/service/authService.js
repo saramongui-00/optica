@@ -17,8 +17,8 @@ const login = async (user, password) => {
       user: usuario.user,
       rol: usuario.rol
     },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN }
+    process.env.JWT_SECRET
+   // { expiresIn: process.env.JWT_EXPIRES_IN }
   );
   console.log("Token generado:", token);
 

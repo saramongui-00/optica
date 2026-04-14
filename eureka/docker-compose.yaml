@@ -127,6 +127,8 @@ services:
       JWT_SECRET: una_clave_secreta_larga_y_dificil
       JWT_EXPIRES_IN: 8h
       EUREKA_HOST: eureka-server
+      TZ: America/Bogota
+
 
   ms-historial:
     build: ../servicios/servicio-historial
@@ -192,6 +194,7 @@ volumes:
   mysql_data:
   mongo_data:
   mongo_pacientes_data:
+  
 
 networks:
   optica-network:

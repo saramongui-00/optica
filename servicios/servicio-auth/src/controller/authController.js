@@ -3,8 +3,8 @@ const producer = require('../service/authEventProducer');
 
 const login = async (req, res) => {
   try {
-    console.log("Hora actual:", new Date());
-    const { user, password } = req.body;
+console.log("Date.now():", Date.now());
+console.log("Math.floor(Date.now()/1000):", Math.floor(Date.now()/1000));    const { user, password } = req.body;
 
     if (!user || !password) {
       return res.status(400).json({ mensaje: 'Usuario y contraseña requeridos' });

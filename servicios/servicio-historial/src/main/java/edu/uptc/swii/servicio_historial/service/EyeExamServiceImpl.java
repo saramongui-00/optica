@@ -44,4 +44,8 @@ public class EyeExamServiceImpl implements EyeExamService {
     public void prepareEyeExam(String patientId, String appointmentId) {
         System.out.println("Preparando examen para paciente " + patientId);
     }
+
+    public void generateFinalRX(){
+
+    }
 }

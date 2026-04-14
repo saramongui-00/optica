@@ -14,16 +14,19 @@ public class MedicalHistoryController {
 
     private final MedicalHistoryService historyService;
 
+    //crear historia a paciente
     @PostMapping("/patient/{patientId}")
     public ResponseEntity<MedicalHistory> createHistory(@PathVariable String patientId) {
         return ResponseEntity.ok(historyService.createMedicalHistory(patientId));
     }
 
+    //obtener historial por id de historial
     @GetMapping("/{id}")
     public ResponseEntity<MedicalHistory> getHistoryById(@PathVariable String id) {
         return ResponseEntity.ok(historyService.getById(id));
     }
 
+    //obtener toda la historia
     @GetMapping("/patient/{patientId}")
     public ResponseEntity<MedicalHistoryFullDTO> getFullHistory(@PathVariable String patientId) {
         return ResponseEntity.ok(historyService.getFullHistory(patientId));

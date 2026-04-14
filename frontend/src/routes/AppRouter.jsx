@@ -1,0 +1,32 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "../pages/Login";
+import User from "../pages/User";
+import Patient from "../pages/Patient";
+import PrivateRoute from "../components/PrivateRoute";
+
+function AppRouter() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/user" element={
+          <PrivateRoute>
+            <User />
+          </PrivateRoute>
+        } />
+        <Route path="/patient" element={
+          <PrivateRoute rolesPermitidos={["OPTOMETRA", "SECRETARIO"]}>
+            <Patient />
+          </PrivateRoute>
+        } />
+        <Route path="/dashboard" element={
+          <PrivateRoute rolesPermitidos={["OPTOMETRA"]}>
+            <User />
+          </PrivateRoute>
+        } />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default AppRouter;

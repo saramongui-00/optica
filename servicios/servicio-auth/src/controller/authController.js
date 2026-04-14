@@ -3,6 +3,7 @@ const producer = require('../service/authEventProducer');
 
 const login = async (req, res) => {
   try {
+    console.log("Hora actual:", new Date());
     const { user, password } = req.body;
 
     if (!user || !password) {

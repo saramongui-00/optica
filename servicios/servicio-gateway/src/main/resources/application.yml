@@ -1,0 +1,40 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: servicio-gateway
+
+  cloud:
+    gateway:
+      routes:
+
+        - id: auth
+          uri: lb://SERVICIO-AUTH
+          predicates:
+            - Path=/auth/**
+
+        - id: usuarios
+          uri: lb://SERVICIO-USUARIOS
+          predicates:
+            - Path=/usuarios/**
+
+        - id: pacientes
+          uri: lb://SERVICIO-PACIENTES
+          predicates:
+            - Path=/pacientes/**
+
+        - id: historial
+          uri: lb://SERVICIO-HISTORIAL
+          predicates:
+            - Path=/historial/**
+
+        - id: citas
+          uri: lb://SERVICIO-CITAS
+          predicates:
+            - Path=/citas/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka

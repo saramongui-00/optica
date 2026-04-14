@@ -20,6 +20,7 @@ const login = async (user, password) => {
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN }
   );
+  console.log("Token generado:", token);
 
   return { token, rol: usuario.rol, nombre: usuario.nombre };
 };

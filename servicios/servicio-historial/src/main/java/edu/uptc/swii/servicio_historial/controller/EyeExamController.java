@@ -25,9 +25,8 @@ public class EyeExamController {
     }
 
     // Obtener examen específico
-    @GetMapping("/{historyId}/examen/{examId}")
+    @GetMapping("/examen/{examId}")
     public ResponseEntity<EyeExam> getExam(
-            @PathVariable String historyId,
             @PathVariable String examId) {
 
         return ResponseEntity.ok(examService.getExam(examId));

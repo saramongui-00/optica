@@ -45,7 +45,7 @@ function User() {
           fontFamily: "'Playfair Display', serif",
           color: "white", fontSize: "18px",
         }}>
-          Óptica
+          Óptica ISIS
         </span>
         <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
           <span style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px" }}>

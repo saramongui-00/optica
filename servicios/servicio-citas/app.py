@@ -1,39 +1,16 @@
-from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from controllers.appointment_controller import router
 from dotenv import load_dotenv
 import os
+import py_eureka_client.eureka_client as eureka_client
+import threading
 
 load_dotenv()
 
-# Kafka solo si la URL está configurada
-KAFKA_URL = os.getenv("KAFKA_URL", "")
-USE_KAFKA = KAFKA_URL != ""
+app = FastAPI(title="Servicio de Citas", version="1.0")
 
-if USE_KAFKA:
-    from events.producer import AppointmentEventProducer
-    from events.consumer import AppointmentEventConsumer
-    producer = AppointmentEventProducer()
-    consumer = AppointmentEventConsumer()
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    if USE_KAFKA:
-        await producer.start()
-        await consumer.start()
-        print("🚀 Servicio de Citas con Kafka iniciado")
-    else:
-        print("🚀 Servicio de Citas iniciado (Kafka desactivado)")
-    yield
-    if USE_KAFKA:
-        await producer.stop()
-        await consumer.stop()
-        print("👋 Servicio de Citas detenido")
-
-app = FastAPI(title="Appointment Service", version="1.0", lifespan=lifespan)
-
-# Configurar CORS para permitir peticiones desde el frontend
+# Configurar CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -44,10 +21,34 @@ app.add_middleware(
 
 app.include_router(router)
 
+@app.on_event("startup")
+async def startup_event():
+    port = int(os.getenv("PORT", 8002))
+    
+    def register_eureka():
+        eureka_client.init(
+            eureka_server="http://eureka-server:8761/eureka",
+            app_name="servicio-citas",
+            instance_port=port,
+            instance_host="servicio-citas"
+        )
+        print("✅ Servicio de Citas registrado en Eureka")
+    
+    thread = threading.Thread(target=register_eureka)
+    thread.start()
+    
+    print(f"🚀 Servicio de Citas iniciado en puerto {port}")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    eureka_client.stop()
+    print("👋 Servicio de Citas detenido")
+
 @app.get("/health")
 async def health():
-    return {"status": "Appointment Service OK"}
+    return {"status": "Servicio Citas OK"}
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8002)
+    port = int(os.getenv("PORT", 8002))
+    uvicorn.run(app, host="0.0.0.0", port=port)

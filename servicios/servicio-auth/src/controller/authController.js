@@ -30,4 +30,14 @@ const validarToken = (req, res) => {
   }
 };
 
-module.exports = { login, validarToken };
+const logout = async (req, res) => {
+  try {
+    const { user } = req.body;
+    await producer.sendLogoutEvent({ user });
+    res.json({ mensaje: 'Sesión cerrada exitosamente' });
+  } catch (error) {
+    res.status(500).json({ mensaje: error.message });
+  }
+};
+
+module.exports = { login, validarToken, logout };

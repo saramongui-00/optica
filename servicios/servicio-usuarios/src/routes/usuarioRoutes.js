@@ -8,10 +8,12 @@ const {
   buscarTodos
 } = require('../controller/usuarioController');
 
-router.get('/', buscarTodos);
-router.post('/', registrarUsuario);
-router.get('/:id', consultarUsuario);
-router.put('/:id', modificarUsuario);
-router.patch('/:id/inhabilitar', inhabilitarUsuario);
+const { verificarToken, soloOptometra } = require('../middleware/authMiddleware');
+
+router.get('/', verificarToken, buscarTodos);
+router.get('/:id', verificarToken, consultarUsuario);
+router.post('/', verificarToken, soloOptometra, registrarUsuario);
+router.put('/:id', verificarToken, soloOptometra, modificarUsuario);
+router.patch('/:id/inhabilitar', verificarToken, soloOptometra, inhabilitarUsuario);
 
 module.exports = router;
